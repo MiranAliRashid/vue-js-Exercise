@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="vue.global.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <style>
+        .table {
+            width: 50%;
+        }
+        
+        .table tr {
+            border: 1px solid black;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+
+        <div>
+            <center>CRUD operation UI</center>
+            <center class="my-1">
+                <input type="text" v-model="update_name">&nbsp;
+                <input type="text" v-model="update_age">
+                <button class="btn btn-warning" v-on:click="updateuser"> update</button></center>
+            <center>
+
+                <table border="1" class="table">
+                    <thead>
+                        <tr>
+                            <th>select</th>
+                            <th>#</th>
+                            <th>name</th>
+                            <th>age</th>
+                            <th>operation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="user in users">
+                            <td><input type="checkbox" v-bind:value='user' v-model='userIds' @change='updateCheckall()'></td>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.age }}</td>
+                            <td>
+                                <a class="btn btn-danger mx-1" v-on:click="deleteuser(user)">delete</a>
+                                <a class="btn btn-warning mx-1" v-on:click="selectuser(user)">update</a>
+                            </td>
+
+                        </tr>
+                    </tbody>
+
+
+                </table>
+            </center>
+        </div>
+
+        <center> <span class="mx-1"> {{ userIds.length }} Row(s) selected &nbsp;&nbsp;&nbsp;</span>
+
+            <input type='checkbox' @click='checkAll()' v-model='isCheckAll'> Check All
+
+            <a class="mx-1" v-on:click="deleteselected">  delete selected rows</a>
+        </center>
+        <center class="my-1"><input type="text" placeholder="name" v-model="newName">&nbsp;
+            <input type="text" placeholder="age" v-model="newAge">
+            <button class="btn btn-success" v-on:click="addNew"> add</button></center>
+
+    </div>
+
+</body>
+<script>
+    const newapp = ({
+
+        data() {
+            return {
+                users: [{
+                    id: 1,
+                    name: "HO",
+                    age: 21
+                }, {
+                    id: 2,
+                    name: "miran",
+                    age: 23
+                }, {
+                    id: 3,
+                    name: "pesha",
+                    age: 20
+                }, {
+                    id: 4,
+                    name: "solin",
+                    age: 20
+                }],
+                newName: "",
+                newAge: "",
+                lastid: 0,
+                userIds: [],
+                isCheckAll: false,
+                countChecked: 0,
+                update_id: "",
+                update_name: "",
+                update_age: ""
+            }
+
+        },
+        methods: {
+            addNew: function() {
+                this.lastid = this.users.length + 1
+                this.users.push({
+                    id: this.lastid,
+                    name: this.newName,
+                    age: this.newAge
+                })
+            },
+            deleteuser: function(user) {
+                this.users.splice(this.users.indexOf(user), 1);
+            },
+            selectuser: function(user) {
+                this.update_id = user.id - 1,
+                    this.update_name = user.name,
+                    this.update_age = user.age
+            },
+            updateuser: function() {
+                this.users[this.update_id].name = this.update_name,
+                    this.users[this.update_id].age = this.update_age
+            },
+            deleteselected: function() {
+                for (let i = 0; i < this.userIds.length; i++) {
+                    this.users.splice(this.users.indexOf(this.userIds[i]), 1)
+
+                }
+            },
+            checkAll: function() {
+
+                this.isCheckAll = !this.isCheckAll;
+                this.userIds = [];
+                if (this.isCheckAll) { // Check all
+                    for (var key in this.users) {
+                        this.userIds.push({
+                            id: this.users[key].id,
+                            name: this.users[key].name,
+                            age: this.users[key].age
+                        });
+                        this.countChecked = this.userIds.length;
+
+                    }
+                } else {
+                    this.countChecked = 0
+
+                }
+
+            },
+            updateCheckall: function() {
+                if (this.userIds.length == this.users.length) {
+                    this.isCheckAll = true;
+                    this.countChecked = this.userIds.length;
+                } else {
+                    this.isCheckAll = false;
+                    this.countChecked = this.userIds.length;
+                }
+            },
+            uncheckall: function() {
+                // this.userIds = false
+                // this.userIds = 0;
+            }
+
+        }
+    })
+    Vue.createApp(newapp).mount('#app');
+</script>
+
+</html>
